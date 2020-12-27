@@ -77,7 +77,12 @@ export default new Vuex.Store({
       return state.teams.find(team => team.id === id);
     },
     getUserTeams: state => id => {
-      return state.teams.filter(team => team.user_id === id).sort((a, b) => a.priority - b.priority)
+      return state.teams.filter(team => team.user_id === id).sort((a, b) => {
+        if (a.points != b.points) {
+          return a.points - b.points
+        }
+        return a.priority - b.priority;
+      })
     },
     getRoundMatches: state => number => {
       return state.matches.filter(match => match.round === number)
