@@ -13,7 +13,11 @@
               Prev
             </button>
           </div>
-          <div class="col-6">Round {{ round }}</div>
+          <div class="col-6">
+            Round {{ round }}
+            <br>
+            <button v-if="randomMode" type="button" class="btn btn-sm btn-primary" @click="playRandom">Play Random</button>
+          </div>
           <div class="col-3">
             <button
               type="button"
@@ -44,6 +48,9 @@ export default {
     numberOfRounds() {
       return this.$store.getters.numberOfRounds;
     },
+    randomMode() {
+      return this.$store.state.config.randomMode
+    }
   },
   methods: {
     incrementRound() {
@@ -52,6 +59,9 @@ export default {
     decrementRound() {
       this.round = this.round - 1;
     },
+    playRandom() {
+      this.$store.commit("playRandom", {round: this.round})
+    }
   },
 };
 </script>

@@ -25,7 +25,7 @@
       <h5 class="mt-4 mb-2">Table</h5>
       <div class="row justify-content-center">
         <div class="col-4">
-          <summary-table />
+          <standings />
         </div>
       </div>
     </div>
@@ -37,7 +37,7 @@ import { mapState } from "vuex";
 import ConfigForm from "./components/ConfigForm";
 import Matches from "./components/Matches.vue";
 import TeamsForm from "./components/TeamsForm";
-import SummaryTable from "./components/SummaryTable";
+import Standings from "./components/Standings";
 import { saveAs } from 'file-saver';
 
 export default {
@@ -46,7 +46,7 @@ export default {
     ConfigForm,
     TeamsForm,
     Matches,
-    SummaryTable,
+    Standings,
   },
   computed: {
     ...mapState({

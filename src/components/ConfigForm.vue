@@ -26,6 +26,18 @@
           />
         </div>
       </div>
+      <div class="row form-group">
+        <label class="col-6 col-form-label"> Random Mode: </label>
+        <div class="col-6 text-left">
+          <button
+            type="button"
+            :class="`btn btn-sm btn-${randomMode ? 'primary' : 'danger'}`"
+            @click="toggleRandomMode"
+          >
+          {{randomMode ? 'On' : 'Off'}}
+          </button>
+        </div>
+      </div>
       <button type="button" class="btn btn-sm btn-info" @click="save">
         Save
       </button>
@@ -58,8 +70,16 @@ export default {
         return this.$store.state.config.status;
       },
     },
+    randomMode: {
+      get() {
+        return this.$store.state.config.randomMode;
+        },
+    },
   },
   methods: {
+    toggleRandomMode() {
+      this.$store.commit("toggleRandomMode");
+    },
     save() {
       this.$store.commit("saveConfig");
     },

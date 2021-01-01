@@ -1,22 +1,43 @@
 <template>
+<div>
   <div class="row">
     <div class="col-4">
-      {{ home.name }} ({{homeUser.name}})
-      <br />
-      <span :class="`badge badge-pill badge-${homeColor}`">###</span>
+      {{ match.homeTeam.name }}
+      <span v-if="match.isPlayable" :class="`badge badge-pill badge-${homeColor}`">###</span>
     </div>
     <div class="col-2">
-      <input type="number" class="form-control text-center" v-model="homeScore" />
+      <input type="number" class="form-control text-center" v-model="homeScore" :disabled="!match.isPlayable" />
     </div>
     <div class="col-2">
-      <input type="number" class="form-control text-center" v-model="awayScore" />
+      <input type="number" class="form-control text-center" v-model="awayScore" :disabled="!match.isPlayable" />
     </div>
     <div class="col-4">
-      {{ away.name }} ({{awayUser.name}})
-      <br />
-      <span :class="`badge badge-pill badge-${awayColor}`">###</span>
+      {{ match.awayTeam.name }}
+      <span v-if="match.isPlayable" :class="`badge badge-pill badge-${awayColor}`">###</span>
     </div>
   </div>
+  <div class="row" v-if="!randomMode">
+    <div class="col-4">
+       User: {{match.homeTeam.user.name}}
+      <br />
+      Player: <select class="" v-model="homePlayerId" :disabled="!match.isPlayable">
+        <option v-for="user in users" :key="user.id" :value="user.id" :selected="user.id == homePlayerId">
+          {{user.name}}
+        </option>
+      </select>
+    </div>
+    <div class="col-4"></div>
+    <div class="col-4">
+       User: {{match.awayTeam.user.name}}  
+      <br />
+      Player: <select v-model="awayPlayerId" :disabled="!match.isPlayable">
+        <option v-for="user in users" :key="user.id" :value="user.id" :selected="user.id == awayPlayerId">
+          {{user.name}}
+        </option>
+      </select>
+    </div>
+  </div>
+</div>
 </template>
 
 <script>
@@ -27,6 +48,44 @@ export default {
   name: "MatchForm",
   props: ["match"],
   computed: {
+    randomMode() {
+      return this.$store.state.config.randomMode
+    },
+    users() {
+      return this.$store.state.users
+    },
+    homePlayer: {
+      get() {
+        return this.$store.getters.getUserById(this.match.homePlayerId)
+      }
+    },
+    awayPlayer: {
+      get() {
+        return this.$store.getters.getUserById(this.match.awayPlayerId)
+      }
+    },
+    homePlayerId: {
+      get() {
+        return this.match.homePlayerId
+      },
+      set(value) {
+        this.$store.commit("updateMatchHomePlayer", {
+          match_id: this.match.id,
+          player_id: value,
+        })
+      }
+    },
+    awayPlayerId: {
+      get() {
+        return this.match.awayPlayerId
+      },
+      set(value) {
+        this.$store.commit("updateMatchAwayPlayer", {
+          match_id: this.match.id,
+          player_id: value,
+        })
+      }
+    },
     homeScore: {
       get() {
         return this.match.hc_score;
@@ -53,37 +112,11 @@ export default {
         }
       },
     },
-    home() {
-      return this.$store.getters.getTeamById(this.match.hc_id);
-    },
-    away() {
-      return this.$store.getters.getTeamById(this.match.ac_id);
-    },
-    homeUser() {
-      return this.$store.getters.getUserById(this.home.user_id);
-    },
-    awayUser() {
-      return this.$store.getters.getUserById(this.away.user_id);
-    },
     homeColor() {
-      if (this.home.user_id != this.away.user_id) {
-        return this.home.user_id == 1 ? color1 : color2;
-      }
-      if (this.home.priority < this.away.priority) {
-        return this.home.user_id == 1 ? color1 : color2;
-      } else {
-        return this.home.user_id == 1 ? color2 : color1;
-      }
+        return this.homePlayerId == 1 ? color1 : color2;
     },
     awayColor() {
-      if (this.home.user_id != this.away.user_id) {
-        return this.away.user_id == 1 ? color1 : color2;
-      }
-      if (this.home.priority < this.away.priority) {
-        return this.away.user_id == 1 ? color2 : color1;
-      } else {
-        return this.away.user_id == 1 ? color1 : <color2></color2>;
-      }
+        return this.awayPlayerId == 1 ? color1 : color2;
     },
   },
 };
